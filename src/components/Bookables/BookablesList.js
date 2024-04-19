@@ -8,12 +8,11 @@ const initialState = {
     group: "Rooms",
     bookablesIndex: 0,
     hasDetails: true,
-    bookables
 };
 
 export default function BookablesList() {
     const [state, dispatch] = useReducer(reducer, initialState);
-    const { group, bookablesIndex, bookables, hasDetails } = state;
+    const { group, bookablesIndex, hasDetails } = state;
     const bookablesInGroup = bookables.filter(b => b.group === group);
     const groups = [...new Set(bookables.map(b => b.group))];
     const bookable = bookablesInGroup[bookablesIndex];
