@@ -1,11 +1,19 @@
-import { useState, Fragment } from "react";
-import data from "../../static.json";
+import { useState, useEffect, Fragment } from "react";
 import { FaArrowRight } from "react-icons/fa";
+import Spinner from "../UI/Spinner";
 
 export default function BookablesList() {
-    const { users } = data;
+    const [users, setUsers] = useState(0);
     const [usersIndex, setUsersIndex] = useState(0);
     const user = users[usersIndex];
+
+    useEffect(() => {
+        fetch("http://localhost:3001/users")
+            .then((resp) => resp.json())
+            .then((data) => setUsers(data));
+    }, []);
+
+    if (users === null) return <Spinner />;
 
     function nextUser() {
         setUsersIndex((i) => (i + 1) % users.length);
@@ -15,7 +23,7 @@ export default function BookablesList() {
         <Fragment>
             <div>
                 <ul className="items-list-nav">
-                    {users.map((u, i) => (
+                    {users && users.map((u, i) => (
                         <li key={u.id} className={i === usersIndex ? "selected" : null}>
                             <button className="btn" onClick={() => setUsersIndex(i)}>
                                 {u.name}
