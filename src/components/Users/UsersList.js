@@ -1,23 +1,34 @@
-import { useState, useEffect, Fragment } from "react";
+import { useReducer, useEffect, Fragment } from "react";
 import { FaArrowRight } from "react-icons/fa";
 import Spinner from "../UI/Spinner";
+import getData from "../../utils/api";
+import reducer from "./userReducer";
+
+const initialState = {
+    usersIndex: 0,
+    users: null,
+    error: false,
+    isLoading: true
+};
 
 export default function BookablesList() {
-    const [users, setUsers] = useState(0);
-    const [usersIndex, setUsersIndex] = useState(0);
-    const user = users[usersIndex];
+    const [state, dispatch] = useReducer(reducer, initialState);
+    const { usersIndex, users, error, isLoading } = state;
+    const user = users && users[usersIndex];
 
+    // run once
     useEffect(() => {
-        fetch("http://localhost:3001/users")
-            .then((resp) => resp.json())
-            .then((data) => setUsers(data));
+        dispatch({ type: "FETCH_USERS_REQUEST" });
+        getData("http://localhost:3001/users")
+            .then(users => dispatch({ type: "FETCH_USERS_SUCCESS", payload: users }))
+            .catch(error => dispatch({ type: "FETCH_USERS_ERROR", payload: error }))
     }, []);
 
-    if (users === null) return <Spinner />;
+    function nextUser() { dispatch({ type: "NEXT_USER" }); }
 
-    function nextUser() {
-        setUsersIndex((i) => (i + 1) % users.length);
-    }
+    if (error) return <p>{error.message}</p>;
+
+    if (isLoading) return <p><Spinner /> Loading users...</p>;
 
     return (
         <Fragment>
@@ -25,7 +36,7 @@ export default function BookablesList() {
                 <ul className="items-list-nav">
                     {users && users.map((u, i) => (
                         <li key={u.id} className={i === usersIndex ? "selected" : null}>
-                            <button className="btn" onClick={() => setUsersIndex(i)}>
+                            <button className="btn" onClick={() => dispatch({ type: "SET_USER", payload: i })}>
                                 {u.name}
                             </button>
                         </li>
