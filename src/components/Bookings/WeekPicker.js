@@ -1,14 +1,15 @@
-import { useReducer, useRef } from "react";
+import { useReducer, useState } from "react";
 import reducer from "./weekReducer";
 import { getWeek } from "../../utils/date-wrangler";
 import { FaChevronLeft, FaCalendarDay, FaChevronRight, FaCalendarCheck } from "react-icons/fa";
 
 export default function WeekPicker({ date }) {
+    const [dateText, setDateText] = useState("2024-04-21");
     const [week, dispatch] = useReducer(reducer, date, getWeek);
-    const textboxRef = useRef();
+    // const textboxRef = useRef();
 
     function goToDate() {
-        dispatch({ type: "SET_DATE", payload: textboxRef.current.value });
+        dispatch({ type: "SET_DATE", payload: dateText });
     }
 
     return (
@@ -23,7 +24,8 @@ export default function WeekPicker({ date }) {
                     <span>Today</span>
                 </button>
                 <span>
-                    <input type="text" ref={textboxRef} placeholder="e.g. 2024-04-21" defaultValue="2024-04-21" />
+                    {/* <input type="text" ref={textboxRef} placeholder="e.g. 2024-04-21" defaultValue="2024-04-21" /> */}
+                    <input type="text" value={dateText} onChange={e => setDateText(e.target.value)} />
                     <button className="btn" onClick={goToDate} >
                         <FaCalendarCheck />
                         <span>Go</span>
