@@ -1,23 +1,15 @@
-import { useReducer } from 'react';
-import UsersList from './UsersList';
-import UserDetails from './UserDetails';
-import reducer from './userReducer';
-
-const initialState = {
-    usersIndex: 0,
-    users: null,
-    error: false,
-    isLoading: true
-};
+import { useState } from "react"; // import useState
+import UsersList from "./UsersList";
+import UserDetails from "./UserDetails"; // import new component
 
 export default function UsersPage() {
-    const [state, dispatch] = useReducer(reducer, initialState);
-    const { users } = state;
-    const user = users && users[state.usersIndex];
+    // manage selected user state
+    const [user, setUser] = useState(null);
 
+    // pass user state down
     return (
         <main className="users-page">
-            <UsersList state={state} dispatch={dispatch} />
+            <UsersList user={user} setUser={setUser} />
             <UserDetails user={user} />
         </main>
     );

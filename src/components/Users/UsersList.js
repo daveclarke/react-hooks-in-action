@@ -1,43 +1,50 @@
-import { useEffect } from "react";
-import { FaArrowRight } from "react-icons/fa";
+import { useState, useEffect } from 'react';
 import Spinner from "../UI/Spinner";
 import getData from "../../utils/api";
 
-export default function UsersList({ state, dispatch }) {
-    const { usersIndex, users, error, isLoading } = state;
+export default function UsersList({ user, setUser }) {
+    const [error, setError] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [users, setUsers] = useState(null);
 
-    // run once
     useEffect(() => {
-        dispatch({ type: "FETCH_USERS_REQUEST" });
         getData("http://localhost:3001/users")
-            .then(users => dispatch({ type: "FETCH_USERS_SUCCESS", payload: users }))
-            .catch(error => dispatch({ type: "FETCH_USERS_ERROR", payload: error }))
-    }, [dispatch]);
+            .then(data => {
+                setUser(data[0]); // set initial user to first (or undefined)
+                setUsers(data);
+                setIsLoading(false);
+            })
+            .catch(error => {
+                setError(error);
+                setIsLoading(false);
+            });
+    }, [setUser]); // pass in dependency
 
-    function nextUser() { dispatch({ type: "NEXT_USER" }); }
+    if (error) {
+        return <p>{error.message}</p>
+    }
 
-    if (error) return <p>{error.message}</p>;
+    if (isLoading) {
+        return <p><Spinner /> Loading users...</p>
+    }
 
-    if (isLoading) return <p><Spinner /> Loading users...</p>;
-
+    // user user.id to match selection.
+    // remove the UI for user details
     return (
-        <div>
-            <ul className="items-list-nav">
-                {users && users.map((u, i) => (
-                    <li key={u.id} className={i === usersIndex ? "selected" : null}>
-                        <button className="btn" onClick={() => dispatch({ type: "SET_USER", payload: i })}>
-                            {u.name}
-                        </button>
-                    </li>
-                ))}
-            </ul>
-            <p>
-                <button className="btn" onClick={nextUser}>
-                    <FaArrowRight />
-                    <span>Next</span>
-                </button>
-            </p>
-
-        </div>
+        <ul className="users items-list-nav">
+            {users.map(u => (
+                <li
+                    key={u.id}
+                    className={u.id === user?.id ? "selected" : null}
+                >
+                    <button
+                        className="btn"
+                        onClick={() => setUser(u)}
+                    >
+                        {u.name}
+                    </button>
+                </li>
+            ))}
+        </ul>
     );
 }
