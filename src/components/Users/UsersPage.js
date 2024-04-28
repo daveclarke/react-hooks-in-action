@@ -6,7 +6,7 @@ import UserContext from "./UserContext";
 export default function UsersPage() {
     // manage selected user state
     const [user, setUser] = useState(null);
-    const loggedInUser = useContext(UserContext);
+    const { user: loggedInUser } = useContext(UserContext);
     const currentUser = user || loggedInUser;
 
 
