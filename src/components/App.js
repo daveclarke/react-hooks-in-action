@@ -14,13 +14,13 @@ import BookablesPage from "./Bookables/BookablesPage";
 import BookingsPage from "./Bookings/BookingsPage";
 import UsersPage from "./Users/UsersPage";
 import UserPicker from "./Users/UserPicker";
-import UserContext from "./Users/UserContext";
+import { UserProvider } from "./Users/UserContext";
 
 export default function App() {
   const [user, setUser] = useState();
 
   return (
-    <UserContext.Provider value={{ user, setUser }}>
+    <UserProvider >
       <Router>
         <div className="App">
           <header>
@@ -57,6 +57,6 @@ export default function App() {
           </Routes>
         </div>
       </Router>
-    </UserContext.Provider>
+    </UserProvider>
   );
 }
