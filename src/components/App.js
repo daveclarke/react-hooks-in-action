@@ -17,7 +17,6 @@ import UserPicker from "./Users/UserPicker";
 import { UserProvider } from "./Users/UserContext";
 
 export default function App() {
-  const [user, setUser] = useState();
 
   return (
     <UserProvider >

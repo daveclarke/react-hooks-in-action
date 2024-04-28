@@ -2,11 +2,13 @@ import { useState, useContext } from "react"; // import useState
 import UsersList from "./UsersList";
 import UserDetails from "./UserDetails"; // import new component
 import UserContext from "./UserContext";
+import { UserSetContext } from "./UserContext";
+
 
 export default function UsersPage() {
     // manage selected user state
     const [user, setUser] = useState(null);
-    const { user: loggedInUser } = useContext(UserContext);
+    const loggedInUser = useContext(UserContext);
     const currentUser = user || loggedInUser;
 
 

@@ -1,10 +1,12 @@
 import { useState, useEffect, useContext } from "react";
 import Spinner from "../UI/Spinner";
 import UserContext from "./UserContext";
+import { UserSetContext } from "./UserContext";
 
 export default function UserPicker() {
     const [users, setUsers] = useState(null);
-    const { user, setUser } = useContext(UserContext);
+    const user = useContext(UserContext);
+    const setUser = useContext(UserSetContext);
 
     useEffect(() => {
         fetch("http://localhost:3001/users")
