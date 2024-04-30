@@ -4,7 +4,7 @@ import { useUser } from '../Users/UserContext';
 
 export default function BookingDetails({ booking, bookable }) {
     const [user] = useUser();
-    const isBooker = booking && user && booking.bookerId === user.id;
+    const isBooker = booking && user && booking.bookerId === parseInt(user.id, 10);
 
     return (
         <div className="booking-details">
