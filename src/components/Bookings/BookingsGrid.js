@@ -1,34 +1,13 @@
-import { useEffect, useMemo, useState, Fragment } from 'react';
-import { getGrid, transformBookings } from './gridBuilder';
-import { getBookings } from '../../utils/api';
+import { useEffect, Fragment } from 'react';
+import { useBookings, useGrid } from "./bookingsHooks";
 import Spinner from '../UI/Spinner';
 
 export default function BookingsGrid({ week, bookable, booking, setBooking }) {
-    const [bookings, setBookings] = useState(null);
-    const [error, setError] = useState(false);
-    const { grid, sessions, dates } = useMemo(
-        () => bookable ? getGrid(bookable, week.start) : {},
-        [bookable, week.start]
-    )
+    const { bookings, status, error } = useBookings(bookable?.id, week.start, week.end);
+    const { grid, sessions, dates } = useGrid(bookable, week.start);
 
     useEffect(() => {
-        if (bookable) {
-            let doUpdate = true;
-            setBookings(null);
-            setError(false);
-            setBooking(null);
-
-            getBookings(bookable.id, week.start, week.end)
-                .then(resp => {
-                    if (doUpdate) {
-                        setBookings(transformBookings(resp));
-                    }
-                })
-                .catch(setError);
-
-            // return clean up function to invalidate previous response data
-            return () => doUpdate = false;
-        }
+        setBooking(null); // deselect booking when switch weeks or bookables
     }, [week, bookable, setBooking]);
 
     function cell(session, date) {
@@ -36,21 +15,21 @@ export default function BookingsGrid({ week, bookable, booking, setBooking }) {
         const isSelected = booking?.session === session && booking?.date === date;
 
         return (
-            <td key={date} className={isSelected ? "selected" : null} onClick={bookings ? () => setBooking(cellData) : null}>
+            <td key={date} className={isSelected ? "selected" : null} onClick={status === "success" ? () => setBooking(cellData) : null}>
                 {cellData.title}
             </td>
         );
     }
 
     return (
-        !grid ? <p>Loading...</p> :
+        !grid ? <p>Waiting for bookable and week details...</p> :
             <Fragment>
-                {error && (
+                {status === "error" && (
                     <p className="bookingsError">
                         {`There was a problem loading the bookings: (${error})`}
                     </p>
                 )}
-                <table className={bookings ? "bookingsGrid active" : "bookingsGrid"}>
+                <table className={status === "success" ? "bookingsGrid active" : "bookingsGrid"}>
                     <thead>
                         <tr>
                             <th>
