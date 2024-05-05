@@ -1,14 +1,10 @@
-import { useEffect, Fragment } from 'react';
+import { Fragment } from 'react';
 import { useBookings, useGrid } from "./bookingsHooks";
 import Spinner from '../UI/Spinner';
 
 export default function BookingsGrid({ week, bookable, booking, setBooking }) {
     const { bookings, status, error } = useBookings(bookable?.id, week.start, week.end);
     const { grid, sessions, dates } = useGrid(bookable, week.start);
-
-    useEffect(() => {
-        setBooking(null); // deselect booking when switch weeks or bookables
-    }, [week, bookable, setBooking]);
 
     function cell(session, date) {
         const cellData = bookings?.[session]?.[date] || grid[session][date];
@@ -19,6 +15,10 @@ export default function BookingsGrid({ week, bookable, booking, setBooking }) {
                 {cellData.title}
             </td>
         );
+    }
+
+    if (!grid) {
+        return <p>Waiting for bookable and week details...</p>
     }
 
     return (
