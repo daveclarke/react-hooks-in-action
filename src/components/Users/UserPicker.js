@@ -1,11 +1,12 @@
 import { useEffect } from "react";
+import { useQuery } from "react-query";
+import getData from "../../utils/api";
 import Spinner from "../UI/Spinner";
 import { useUser } from "./UserContext";
-import useFetch from "../../utils/useFetch";
 
 export default function UserPicker() {
     const [user, setUser] = useUser();
-    const { data: users = [], status, error } = useFetch("http://localhost:3001/users");
+    const { data: users = [], status, error } = useQuery("users", () => getData("http://localhost:3001/users"));
 
     useEffect(() => {
         if (users?.[0]) setUser(users[0]);

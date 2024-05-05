@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useRef } from "react";
 import { FaChevronLeft, FaCalendarDay, FaChevronRight, FaCalendarCheck } from "react-icons/fa";
 import { addDays, shortISO } from "../../utils/date-wrangler";
 import { useBookingsParams } from "./bookingsHooks";

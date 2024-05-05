@@ -1,5 +1,6 @@
 import { shortISO, isDate } from '../../utils/date-wrangler';
-import useFetch from '../../utils/useFetch';
+import { useQuery } from 'react-query';
+import getData from '../../utils/api';
 import { transformBookings } from './gridBuilder';
 import { useMemo } from 'react';
 import { getGrid } from './gridBuilder';
@@ -10,7 +11,7 @@ export function useBookings(bookableId, startDate, endDate) {
     const end = shortISO(endDate);
     const urlRoot = "http://localhost:3001/bookings";
     const queryString = `bookableId=${bookableId}`;
-    const query = useFetch(`${urlRoot}?${queryString}`);
+    const query = useQuery(["bookings", bookableId, start, end], () => getData(`${urlRoot}?${queryString}`));
 
     return {
         bookings: query.data ? transformBookings(query.data) : {}, ...query
